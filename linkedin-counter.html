@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>LinkedIn Character Counter</title>
+<meta name="description" content="Free LinkedIn character counter. Check LinkedIn post length instantly.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; background:#f4f6f8; padding:20px; }
+.box { max-width:700px; margin:auto; background:#fff; padding:20px; }
+textarea { width:100%; height:200px; padding:10px; }
+.good { color:green; }
+.bad { color:red; }
+</style>
+</head>
+
+<body>
+<div class="box"><nav style="margin-bottom:15px; font-size:15px;">
+  <a href="index.html">Resume Word Counter</a> |
+  <a href="linkedin-counter.html">LinkedIn Character Counter</a>
+</nav>
+
+<h1>LinkedIn Character Counter</h1>
+<textarea id="text" placeholder="Paste LinkedIn post..." oninput="count()"></textarea>
+
+<p>Characters: <strong id="count">0</strong></p>
+<p>Status: <span id="status"></span></p>
+</div>
+
+<script>
+function count() {
+ let t = document.getElementById("text").value;
+ let c = t.length;
+ document.getElementById("count").innerText = c;
+
+ let status = document.getElementById("status");
+ if(c <= 3000) {
+   status.innerText = "Safe for LinkedIn";
+   status.className = "good";
+ } else {
+   status.innerText = "Too long for LinkedIn";
+   status.className = "bad";
+ }
+}
+</script>
+</body>
+</html>

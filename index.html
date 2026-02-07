@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="-4Tt8It7qZBf2v5-9Ey8lUafm6V5EFxSpXy4TWY2DPo" />
+<title>Resume Word Counter & ATS Length Checker</title>
+<meta name="description" content="Free resume word counter and ATS length checker. Check ideal resume word limit instantly.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f4f7;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+}
+textarea {
+  width: 100%;
+  height: 220px;
+  padding: 12px;
+  font-size: 15px;
+}
+.result {
+  margin-top: 15px;
+  font-size: 16px;
+}
+.good { color: green; font-weight: bold; }
+.bad { color: red; font-weight: bold; }
+.ok { color: orange; font-weight: bold; }
+</style>
+</head>
+
+<body>
+
+<div class="container"><nav style="margin-bottom:15px; font-size:15px;">
+  <a href="index.html">Resume Word Counter</a> |
+  <a href="linkedin-counter.html">LinkedIn Character Counter</a>
+</nav>
+
+<h1>Resume Word Counter & ATS Length Checker</h1>
+<p>Paste your resume text below to check word count and ATS-friendly length.</p>
+
+<textarea id="textInput" placeholder="Paste your resume text here..." oninput="analyzeResume()"></textarea>
+
+<div class="result">
+<p>Words: <strong id="wordCount">0</strong></p>
+<p>Characters (with spaces): <strong id="charWithSpace">0</strong></p>
+<p>Characters (without spaces): <strong id="charWithoutSpace">0</strong></p>
+<p>Status: <span id="status"></span></p>
+</div>
+
+<hr>
+
+<h3>ATS Resume Tips</h3>
+<ul>
+<li>Ideal resume length: <strong>450 – 650 words</strong></li>
+<li>Use simple fonts (Arial, Calibri)</li>
+<li>Avoid tables, images, graphics</li>
+<li>Use bullet points & action verbs</li>
+</ul>
+
+</div>
+
+<script>
+function analyzeResume() {
+  let text = document.getElementById("textInput").value;
+
+  let words = text.trim().split(/\s+/).filter(w => w.length > 0);
+  let wordCount = words.length;
+
+  let charWithSpace = text.length;
+  let charWithoutSpace = text.replace(/\s/g, '').length;
+
+  document.getElementById("wordCount").innerText = wordCount;
+  document.getElementById("charWithSpace").innerText = charWithSpace;
+  document.getElementById("charWithoutSpace").innerText = charWithoutSpace;
+
+  let statusText = "";
+  let statusClass = "";
+
+  if (wordCount < 350) {
+    statusText = "Too Short – Resume looks weak for ATS";
+    statusClass = "bad";
+  } else if (wordCount >= 350 && wordCount <= 650) {
+    statusText = "Perfect Length – ATS Friendly Resume";
+    statusClass = "good";
+  } else {
+    statusText = "Too Long – Resume may get rejected";
+    statusClass = "bad";
+  }
+
+  let statusEl = document.getElementById("status");
+  statusEl.innerText = statusText;
+  statusEl.className = statusClass;
+}
+</script>
+<hr>
+<footer style="text-align:center; font-size:14px; margin-top:20px;">
+  <p>
+    <a href="about.html">About</a> |
+    <a href="privacy.html">Privacy Policy</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="linkedin-counter.html">LinkedIn Character Counter</a>
+  </p>
+</footer>
+
+</body>
+</html>

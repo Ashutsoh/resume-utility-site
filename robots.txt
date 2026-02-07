@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ubiquitous-hamster-a571cc.netlify.app/sitemap.xml
