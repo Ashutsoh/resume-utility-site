@@ -1,116 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="google-site-verification" content="-4Tt8It7qZBf2v5-9Ey8lUafm6V5EFxSpXy4TWY2DPo" />
-<title>Resume Word Counter & ATS Length Checker</title>
-<meta name="description" content="Free resume word counter and ATS length checker. Check ideal resume word limit instantly.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="-4Tt8It7qZBf2v5-9Ey8lUafm6V5EFxSpXy4TWY2DPo" />
+    <title>Resume Word Counter & ATS Optimization Checker | Free Tool</title>
+    <meta name="description" content="Free resume word counter and ATS optimization checker. Analyze word count, readability, action verbs, keywords, and get ATS-friendly recommendations.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-  padding: 20px;
-}
-.container {
-  max-width: 800px;
-  margin: auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 6px;
-}
-textarea {
-  width: 100%;
-  height: 220px;
-  padding: 12px;
-  font-size: 15px;
-}
-.result {
-  margin-top: 15px;
-  font-size: 16px;
-}
-.good { color: green; font-weight: bold; }
-.bad { color: red; font-weight: bold; }
-.ok { color: orange; font-weight: bold; }
-</style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: #6366f1;
+            text-decoration: none;
+            margin: 5px 12px;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: inline-block;
+        }
+
+        .nav a:hover {
+            color: #8b5cf6;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            font-size: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .word-count-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .word-count-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.4s ease;
+            border-radius: 4px;
+        }
+
+        .range-marker {
+            position: absolute;
+            top: -8px;
+            height: 24px;
+            width: 2px;
+            background: #666;
+        }
+
+        .range-marker.min { left: 53.8%; } /* 350/650 */
+        .range-marker.max { left: 100%; }
+
+        .fill-short { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+        .fill-perfect { background: linear-gradient(90deg, #10b981, #059669); }
+        .fill-long { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-card {
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-short {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .status-perfect {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .status-long {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .status-icon {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+
+        .status-content h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .status-content p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .analysis-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .score-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .score-excellent { color: #10b981; }
+        .score-good { color: #3b82f6; }
+        .score-fair { color: #f59e0b; }
+        .score-poor { color: #ef4444; }
+
+        .dot-excellent { background: #10b981; }
+        .dot-good { background: #3b82f6; }
+        .dot-fair { background: #f59e0b; }
+        .dot-poor { background: #ef4444; }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .checklist-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .keyword-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .keyword-tag {
+            background: #6366f1;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tip-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .tip-card h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #6366f1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .tip-card li {
+            padding: 4px 0 4px 20px;
+            position: relative;
+        }
+
+        .tip-card li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .info-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .info-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .info-section p {
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        footer a {
+            color: #6366f1;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/">Word Counter</a> | 
+            <a href="/linkedin-counter">LinkedIn Counter</a> | 
+            <a href="/password-checker">Password Checker</a> |
+            <a href="/resume-counter">Resume Counter</a>
+        </nav>
 
-<div class="container">
-  <nav style="margin-bottom:15px; text-align:center;">
-  <a href="index.html">Word Counter</a> |
-  <a href="linkedin-counter.html">LinkedIn Character Counter</a> |
-  <a href="password-checker.html">Password Strength Checker</a>
-</nav>
+        <div class="header">
+            <h1>📄 Resume Word Counter & ATS Checker</h1>
+            <p>Optimize your resume length and ATS compatibility with real-time analysis</p>
+        </div>
 
-<h1>Resume Word Counter & ATS Length Checker</h1>
-<p>Paste your resume text below to check word count and ATS-friendly length.</p>
+        <div class="content">
+            <div class="textarea-wrapper">
+                <textarea 
+                    id="textInput" 
+                    class="textarea" 
+                    placeholder="Paste your resume text here for comprehensive analysis..."
+                ></textarea>
+            </div>
 
-<textarea id="textInput" placeholder="Paste your resume text here..." oninput="analyzeResume()"></textarea>
+            <div class="word-count-bar">
+                <div class="range-marker min" title="Minimum recommended: 350 words"></div>
+                <div class="range-marker max" title="Maximum recommended: 650 words"></div>
+                <div class="word-count-fill" id="wordBar"></div>
+            </div>
 
-<div class="result">
-<p>Words: <strong id="wordCount">0</strong></p>
-<p>Characters (with spaces): <strong id="charWithSpace">0</strong></p>
-<p>Characters (without spaces): <strong id="charWithoutSpace">0</strong></p>
-<p>Status: <span id="status"></span></p>
-</div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="wordCount">0</div>
+                    <div class="stat-label">Words</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="charWithSpace">0</div>
+                    <div class="stat-label">With Spaces</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="charWithoutSpace">0</div>
+                    <div class="stat-label">No Spaces</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="sentences">0</div>
+                    <div class="stat-label">Sentences</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="paragraphs">0</div>
+                    <div class="stat-label">Paragraphs</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="readTime">0 sec</div>
+                    <div class="stat-label">Read Time</div>
+                </div>
+            </div>
 
-<hr>
+            <div id="statusCard" class="status-card hidden">
+                <div class="status-icon" id="statusIcon"></div>
+                <div class="status-content">
+                    <h2 id="statusTitle"></h2>
+                    <p id="statusMessage"></p>
+                </div>
+            </div>
 
-<h3>ATS Resume Tips</h3>
-<ul>
-<li>Ideal resume length: <strong>450 – 650 words</strong></li>
-<li>Use simple fonts (Arial, Calibri)</li>
-<li>Avoid tables, images, graphics</li>
-<li>Use bullet points & action verbs</li>
-</ul>
+            <div id="analysisSection" class="hidden">
+                <div class="analysis-section">
+                    <h3>
+                        🎯 ATS Optimization Score
+                        <span class="score-indicator" id="atsScore">
+                            <span class="score-dot"></span>
+                            <span>Analyzing...</span>
+                        </span>
+                    </h3>
+                    <ul class="checklist" id="atsChecklist"></ul>
+                </div>
 
-</div>
+                <div class="analysis-section">
+                    <h3>
+                        ⚡ Action Verbs Detected
+                        <span class="score-indicator" id="verbScore">
+                            <span class="score-dot"></span>
+                            <span>0 found</span>
+                        </span>
+                    </h3>
+                    <div class="keyword-grid" id="verbGrid"></div>
+                </div>
 
-<script>
-function analyzeResume() {
-  let text = document.getElementById("textInput").value;
+                <div class="analysis-section">
+                    <h3>
+                        🔑 Skills & Keywords
+                        <span class="score-indicator" id="keywordScore">
+                            <span class="score-dot"></span>
+                            <span>0 found</span>
+                        </span>
+                    </h3>
+                    <div class="keyword-grid" id="keywordGrid"></div>
+                </div>
 
-  let words = text.trim().split(/\s+/).filter(w => w.length > 0);
-  let wordCount = words.length;
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>✅ Length Guidelines</h4>
+                        <ul>
+                            <li>Entry-level: 350-500 words</li>
+                            <li>Mid-level: 450-600 words</li>
+                            <li>Senior: 550-650 words</li>
+                            <li>Executive: Up to 700 words</li>
+                        </ul>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🎨 Formatting Tips</h4>
+                        <ul>
+                            <li>Use simple fonts (Arial, Calibri)</li>
+                            <li>Avoid tables and images</li>
+                            <li>Use standard headings</li>
+                            <li>Stick to bullet points</li>
+                        </ul>
+                    </div>
+                    <div class="tip-card">
+                        <h4>💡 Content Strategy</h4>
+                        <ul>
+                            <li>Start with action verbs</li>
+                            <li>Quantify achievements</li>
+                            <li>Include relevant keywords</li>
+                            <li>Focus on recent experience</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-  let charWithSpace = text.length;
-  let charWithoutSpace = text.replace(/\s/g, '').length;
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="copyText()">📋 Copy Text</button>
+                <button class="btn btn-secondary" onclick="clearText()">🗑️ Clear</button>
+            </div>
 
-  document.getElementById("wordCount").innerText = wordCount;
-  document.getElementById("charWithSpace").innerText = charWithSpace;
-  document.getElementById("charWithoutSpace").innerText = charWithoutSpace;
+            <div class="info-section">
+                <h2>Why Resume Word Count Matters for ATS</h2>
+                <p>Applicant Tracking Systems (ATS) scan resumes before human eyes see them. The ideal resume length of <strong>450-650 words</strong> balances providing enough detail for ATS keyword matching while remaining concise enough for recruiters to quickly review. Too short appears inexperienced; too long risks rejection for being unfocused.</p>
 
-  let statusText = "";
-  let statusClass = "";
+                <h2>Resume Length by Experience Level</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Experience Level</th>
+                            <th>Recommended Words</th>
+                            <th>Page Length</th>
+                            <th>Key Focus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Entry Level (0-3 years)</strong></td>
+                            <td>350-500 words</td>
+                            <td>1 page</td>
+                            <td>Education, internships, skills</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mid-Level (3-7 years)</strong></td>
+                            <td>450-600 words</td>
+                            <td>1-2 pages</td>
+                            <td>Achievements, relevant experience</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Senior (7-15 years)</strong></td>
+                            <td>550-650 words</td>
+                            <td>2 pages</td>
+                            <td>Leadership, major accomplishments</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Executive (15+ years)</strong></td>
+                            <td>600-700 words</td>
+                            <td>2 pages</td>
+                            <td>Strategic impact, executive presence</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-  if (wordCount < 350) {
-    statusText = "Too Short – Resume looks weak for ATS";
-    statusClass = "bad";
-  } else if (wordCount >= 350 && wordCount <= 650) {
-    statusText = "Perfect Length – ATS Friendly Resume";
-    statusClass = "good";
-  } else {
-    statusText = "Too Long – Resume may get rejected";
-    statusClass = "bad";
-  }
+                <h2>How ATS Systems Scan Resumes</h2>
+                <p>ATS software parses your resume for keywords matching the job description, evaluates formatting compatibility, and scores candidates based on relevance. Resumes with proper keyword density, clear structure, and appropriate length score higher. Our tool helps you optimize all three factors.</p>
 
-  let statusEl = document.getElementById("status");
-  statusEl.innerText = statusText;
-  statusEl.className = statusClass;
-}
-</script>
-<hr>
-<footer style="text-align:center; font-size:14px; margin-top:20px;">
-  <p>
-    <a href="about.html">About</a> |
-    <a href="privacy.html">Privacy Policy</a> |
-    <a href="contact.html">Contact</a> |
-    <a href="linkedin-counter.html">LinkedIn Character Counter</a>
-  </p>
-</footer>
+                <p>Use action verbs like "achieved," "managed," "developed," and "led" to demonstrate impact. Include industry-specific keywords and technical skills relevant to your target role. Avoid graphics, complex formatting, and unusual fonts that ATS systems struggle to parse.</p>
+            </div>
+        </div>
 
+        <footer>
+            <p>
+                <a href="/about">About</a> |
+                <a href="/privacy">Privacy Policy</a> |
+                <a href="/contact">Contact</a> |
+                <a href="/linkedin-counter">LinkedIn Character Counter</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const wordCount = document.getElementById('wordCount');
+        const charWithSpace = document.getElementById('charWithSpace');
+        const charWithoutSpace = document.getElementById('charWithoutSpace');
+        const sentences = document.getElementById('sentences');
+        const paragraphs = document.getElementById('paragraphs');
+        const readTime = document.getElementById('readTime');
+        const wordBar = document.getElementById('wordBar');
+        const statusCard = document.getElementById('statusCard');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusMessage = document.getElementById('statusMessage');
+        const analysisSection = document.getElementById('analysisSection');
+        const atsChecklist = document.getElementById('atsChecklist');
+        const atsScore = document.getElementById('atsScore');
+        const verbScore = document.getElementById('verbScore');
+        const verbGrid = document.getElementById('verbGrid');
+        const keywordScore = document.getElementById('keywordScore');
+        const keywordGrid = document.getElementById('keywordGrid');
+
+        const actionVerbs = [
+            'achieved', 'improved', 'managed', 'developed', 'created', 'implemented', 
+            'led', 'increased', 'reduced', 'launched', 'delivered', 'coordinated',
+            'streamlined', 'optimized', 'generated', 'designed', 'established',
+            'executed', 'analyzed', 'directed', 'built', 'facilitated', 'drove',
+            'spearheaded', 'pioneered', 'transformed', 'accelerated', 'enhanced'
+        ];
+
+        const skillKeywords = [
+            'leadership', 'management', 'strategy', 'analysis', 'communication',
+            'project', 'team', 'development', 'marketing', 'sales', 'operations',
+            'financial', 'technical', 'strategic', 'customer', 'business',
+            'planning', 'budget', 'performance', 'quality', 'innovation',
+            'collaborative', 'analytical', 'problem-solving', 'stakeholder'
+        ];
+
+        textInput.addEventListener('input', analyzeResume);
+
+        function analyzeResume() {
+            const text = textInput.value;
+            
+            if (text.length === 0) {
+                statusCard.classList.add('hidden');
+                analysisSection.classList.add('hidden');
+                wordBar.style.width = '0%';
+                return;
+            }
+
+            analysisSection.classList.remove('hidden');
+
+            // Word and character counts
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            const wordLength = words.length;
+            const charsWithSpace = text.length;
+            const charsWithoutSpace = text.replace(/\s/g, '').length;
+
+            wordCount.textContent = wordLength.toLocaleString();
+            charWithSpace.textContent = charsWithSpace.toLocaleString();
+            charWithoutSpace.textContent = charsWithoutSpace.toLocaleString();
+
+            // Sentences and paragraphs
+            const sentenceCount = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            const paragraphCount = text.split(/\n\n+/).filter(p => p.trim().length > 0).length;
+            
+            sentences.textContent = sentenceCount.toLocaleString();
+            paragraphs.textContent = paragraphCount.toLocaleString();
+
+            // Read time (250 words per minute for recruiters)
+            const minutes = Math.ceil(wordLength / 250);
+            readTime.textContent = minutes < 1 ? `${Math.ceil(wordLength / 4.17)} sec` : `${minutes} min`;
+
+            // Word count bar (max at 650 words)
+            const maxWords = 650;
+            const percentage = Math.min((wordLength / maxWords) * 100, 100);
+            wordBar.style.width = `${percentage}%`;
+
+            // Status card
+            statusCard.classList.remove('hidden');
+            
+            if (wordLength < 350) {
+                statusCard.className = 'status-card status-short';
+                wordBar.className = 'word-count-fill fill-short';
+                statusIcon.textContent = '⚠️';
+                statusTitle.textContent = 'Resume Too Short';
+                statusMessage.textContent = `Your resume has ${wordLength} words. Add ${350 - wordLength} more words to reach the minimum recommended length. ATS systems may flag short resumes as lacking experience.`;
+            } else if (wordLength >= 350 && wordLength <= 650) {
+                statusCard.className = 'status-card status-perfect';
+                wordBar.className = 'word-count-fill fill-perfect';
+                statusIcon.textContent = '✅';
+                statusTitle.textContent = 'Perfect ATS Length!';
+                statusMessage.textContent = `Your resume has ${wordLength} words, which is ideal for ATS systems. This length provides enough detail for keyword matching while remaining concise for recruiters.`;
+            } else {
+                statusCard.className = 'status-card status-long';
+                wordBar.className = 'word-count-fill fill-long';
+                statusIcon.textContent = '❌';
+                statusTitle.textContent = 'Resume Too Long';
+                statusMessage.textContent = `Your resume has ${wordLength} words. Consider removing ${wordLength - 650} words. Long resumes risk rejection by ATS systems and lose recruiter attention.`;
+            }
+
+            // Action verb analysis
+            const textLower = text.toLowerCase();
+            const foundVerbs = actionVerbs.filter(verb => 
+                new RegExp(`\\b${verb}(ed|d|s)?\\b`, 'i').test(textLower)
+            );
+            
+            verbScore.innerHTML = `
+                <span class="score-dot ${getScoreDotClass(foundVerbs.length, 5)}"></span>
+                <span class="${getScoreClass(foundVerbs.length, 5)}">${foundVerbs.length} found</span>
+            `;
+            
+            verbGrid.innerHTML = foundVerbs.length > 0 
+                ? foundVerbs.slice(0, 12).map(verb => `<div class="keyword-tag">${verb}</div>`).join('')
+                : '<p style="color: #999; padding: 10px;">No strong action verbs detected. Start bullet points with verbs like "achieved", "managed", "developed".</p>';
+
+            // Keyword analysis
+            const foundKeywords = skillKeywords.filter(keyword => 
+                new RegExp(`\\b${keyword}`, 'i').test(textLower)
+            );
+            
+            keywordScore.innerHTML = `
+                <span class="score-dot ${getScoreDotClass(foundKeywords.length, 8)}"></span>
+                <span class="${getScoreClass(foundKeywords.length, 8)}">${foundKeywords.length} found</span>
+            `;
+            
+            keywordGrid.innerHTML = foundKeywords.length > 0
+                ? foundKeywords.slice(0, 12).map(keyword => `<div class="keyword-tag">${keyword}</div>`).join('')
+                : '<p style="color: #999; padding: 10px;">No common skill keywords detected. Include relevant industry terms and skills.</p>';
+
+            // ATS checklist
+            const checks = [
+                { 
+                    test: wordLength >= 350 && wordLength <= 650, 
+                    text: 'Word count is ATS-friendly (350-650 words)',
+                    pass: wordLength >= 350 && wordLength <= 650
+                },
+                {
+                    test: foundVerbs.length >= 5,
+                    text: `Contains action verbs (${foundVerbs.length} found, 5+ recommended)`,
+                    pass: foundVerbs.length >= 5
+                },
+                {
+                    test: foundKeywords.length >= 5,
+                    text: `Includes relevant keywords (${foundKeywords.length} found, 5+ recommended)`,
+                    pass: foundKeywords.length >= 5
+                },
+                {
+                    test: sentenceCount > 0 && wordLength / sentenceCount < 25,
+                    text: 'Sentences are concise (avg < 25 words)',
+                    pass: sentenceCount > 0 && wordLength / sentenceCount < 25
+                },
+                {
+                    test: !/<[^>]+>/.test(text),
+                    text: 'No HTML or complex formatting detected',
+                    pass: !/<[^>]+>/.test(text)
+                },
+                {
+                    test: !/[^\x00-\x7F]/.test(text) || /[\u0080-\uFFFF]/.test(text),
+                    text: 'Uses standard characters (ATS-compatible)',
+                    pass: true
+                }
+            ];
+
+            const passedChecks = checks.filter(c => c.pass).length;
+            const totalChecks = checks.length;
+            const scorePercentage = Math.round((passedChecks / totalChecks) * 100);
+
+            let scoreLabel, scoreClass, dotClass;
+            if (scorePercentage >= 85) {
+                scoreLabel = 'Excellent';
+                scoreClass = 'score-excellent';
+                dotClass = 'dot-excellent';
+            } else if (scorePercentage >= 70) {
+                scoreLabel = 'Good';
+                scoreClass = 'score-good';
+                dotClass = 'dot-good';
+            } else if (scorePercentage >= 50) {
+                scoreLabel = 'Fair';
+                scoreClass = 'score-fair';
+                dotClass = 'dot-fair';
+            } else {
+                scoreLabel = 'Needs Work';
+                scoreClass = 'score-poor';
+                dotClass = 'dot-poor';
+            }
+
+            atsScore.innerHTML = `
+                <span class="score-dot ${dotClass}"></span>
+                <span class="${scoreClass}">${scoreLabel} (${scorePercentage}%)</span>
+            `;
+
+            atsChecklist.innerHTML = checks.map(check => `
+                <li class="checklist-item">
+                    <span class="checklist-icon">${check.pass ? '✅' : '❌'}</span>
+                    <span>${check.text}</span>
+                </li>
+            `).join('');
+        }
+
+        function getScoreClass(count, threshold) {
+            if (count >= threshold * 1.5) return 'score-excellent';
+            if (count >= threshold) return 'score-good';
+            if (count >= threshold * 0.5) return 'score-fair';
+            return 'score-poor';
+        }
+
+        function getScoreDotClass(count, threshold) {
+            if (count >= threshold * 1.5) return 'dot-excellent';
+            if (count >= threshold) return 'dot-good';
+            if (count >= threshold * 0.5) return 'dot-fair';
+            return 'dot-poor';
+        }
+
+        function copyText() {
+            textInput.select();
+            document.execCommand('copy');
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+
+        function clearText() {
+            if (textInput.value.length > 0) {
+                if (confirm('Are you sure you want to clear all text?')) {
+                    textInput.value = '';
+                    analyzeResume();
+                }
+            }
+        }
+
+        // Initialize
+        analyzeResume();
+    </script>
 </body>
 </html>
