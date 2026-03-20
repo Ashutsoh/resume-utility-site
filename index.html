@@ -956,7 +956,7 @@
         <h2>Contact Us</h2>
         <p class="subtitle">Have a feature request, found a bug, or want to say hello? We'd love to hear from you.</p>
 
-        <form id="contactForm" onsubmit="submitContact(event)" style="max-width:560px">
+        <form id="contactForm" action="https://formspree.io/f/mkoqejvy" method="POST" style="max-width:560px">
             <div class="form-group">
                 <label for="contactName">Name *</label>
                 <input type="text" id="contactName" required>
@@ -1362,9 +1362,17 @@ function copyText() {
 // ═════════════════════════════════════════
 function submitContact(e) {
     e.preventDefault();
-    document.getElementById('successMessage').style.display = 'block';
-    document.getElementById('contactForm').reset();
-    setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+    fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(e.target)).toString()
+    })
+    .then(() => {
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('contactForm').reset();
+        setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+    })
+    .catch(() => alert('Something went wrong. Please try again.'));
 }
 
 // Init generator on load
